@@ -67,11 +67,11 @@ spec:
   - host: foo.bar.com
     http:
       paths:
-      - path: /simple-fanout/foo
+      - path: /anything/simple-fanout/foo
         backend:
-          serviceName: httpbin
+          serviceName: simple-fanout
           servicePort: 80
-      - path: /simple-fanout/bar
+      - path: /anything/simple-fanout/bar
         backend:
-          serviceName: httpbin
+          serviceName: simple-fanout
           servicePort: 80

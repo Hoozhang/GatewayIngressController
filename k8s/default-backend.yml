@@ -64,5 +64,5 @@ metadata:
     kubernetes.io/ingress.class: spring.cloud.gateway
 spec:
   backend:
-    serviceName: httpbin1
+    serviceName: httpbin
     servicePort: 80

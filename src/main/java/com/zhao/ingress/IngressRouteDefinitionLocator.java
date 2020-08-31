@@ -10,6 +10,7 @@ import io.fabric8.kubernetes.client.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
+import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.context.ApplicationEventPublisher;
@@ -94,8 +95,12 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                             for (HTTPIngressPath pathBackend: rule.getHttp().getPaths()) {
                                 String path = pathBackend.getPath();
                                 IngressBackend backend = pathBackend.getBackend();
+                                URI uri = UriComponentsBuilder.newInstance()
+                                        .scheme("lb")
+                                        .host(backend.getServiceName())
+                                        .build().toUri();
                                 // construct a RouteDefinition with text
-                                String text = id + routeIdx + "=" + backend.getServiceName() + ","
+                                String text = id + routeIdx + "=" + uri + ","
                                         + "Host=" + host + ",Path=" + path;
                                 RouteDefinition routeDefinition = new RouteDefinition(text);
                                 routeDefinitions.put(routeDefinition.getId(), routeDefinition);
@@ -106,8 +111,16 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                         }
                     }
                     if (defaultBackend != null) {
-                        String text = id + routeIdx + "=" + defaultBackend.getServiceName();
+                        URI uri = UriComponentsBuilder.newInstance()
+                                .scheme("lb")
+                                .host(defaultBackend.getServiceName())
+                                .build().toUri();
+                        String text = id + routeIdx + "=" + uri;
                         RouteDefinition routeDefinition = new RouteDefinition(text);
+                        FilterDefinition filterDefinition = new FilterDefinition("PreserveHostHeader");
+                        List<FilterDefinition> filterDefinitions = new ArrayList<>();
+                        filterDefinitions.add(filterDefinition);
+                        routeDefinition.setFilters(filterDefinitions);
                         routeDefinitions.put(routeDefinition.getId(), routeDefinition);
                         routeIdx++;
                         String yaml = this.objectMapper.writeValueAsString(routeDefinition);

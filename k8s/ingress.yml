@@ -60,7 +60,7 @@ spec:
     spec:
       serviceAccountName: gateway-as-ingress-service-account
       containers:
-      - image: zhaodockerhub/gateway-as-ingress:v0.1
+      - image: zhaodockerhub/gateway-as-ingress:v0.4
         imagePullPolicy: Always
         name: gateway-as-ingress
         ports:
