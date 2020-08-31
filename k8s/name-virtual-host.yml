@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: name-virtual-host
+  namespace: gateway-as-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: name-virtual-host
+  template:
+    metadata:
+      labels:
+        app: name-virtual-host
+    spec:
+      containers:
+      - image: kennethreitz/httpbin
+        name: httpbin
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "386Mi"
+          requests:
+            memory: "386Mi"
+        readinessProbe:
+          httpGet:
+            path: /anything
+            port: 80
+          initialDelaySeconds: 3
+          timeoutSeconds: 3
+          periodSeconds: 10
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /anything
+            port: 80
+          initialDelaySeconds: 10
+          timeoutSeconds: 3
+          periodSeconds: 10
+          failureThreshold: 3
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: name-virtual-host
+  namespace: gateway-as-ingress
+  labels:
+    app: name-virtual-host
+spec:
+  selector:
+    app: name-virtual-host
+  ports:
+  - protocol: TCP
+    port: 80
+    name: http
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host
+  namespace: gateway-as-ingress
+  annotations:
+    kubernetes.io/ingress.class: spring.cloud.gateway
+spec:
+  rules:
+  - host: foo.bar.com
+    http:
+      paths:
+      - path: /name-virtual-host/foo
+        backend:
+          serviceName: httpbin
+          servicePort: 80
+  - host: bar.foo.com
+    http:
+      paths:
+      - path: /name-virtual-host/bar
+        backend:
+          serviceName: httpbin
+          servicePort: 80

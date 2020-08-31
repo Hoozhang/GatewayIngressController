@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: gateway
+  jmx:
+    enabled: false  # 不通过JMX监控Spring Boot应用
+
+# spring boot actuator 常用配置
+management:
+  endpoint:
+    health:
+      show-details: when_authorized  # 显示被授权支持的健康状态
+  endpoints:
+    web:
+      exposure:
+        include: '*'  # 显示所有支持的状态查询
