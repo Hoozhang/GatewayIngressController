@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: simple-fanout
-  namespace: gateway-as-ingress
+  namespace: gateway-ingress-v1
 spec:
   replicas: 1
   selector:
@@ -20,9 +20,9 @@ spec:
         - containerPort: 80
         resources:
           limits:
-            memory: "386Mi"
+            memory: "128Mi"
           requests:
-            memory: "386Mi"
+            memory: "128Mi"
         readinessProbe:
           httpGet:
             path: /anything
@@ -44,7 +44,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: simple-fanout
-  namespace: gateway-as-ingress
+  namespace: gateway-ingress-v1
   labels:
     app: simple-fanout
 spec:
@@ -59,19 +59,19 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: simple-fanout
-  namespace: gateway-as-ingress
+  namespace: gateway-ingress-v1
   annotations:
     kubernetes.io/ingress.class: spring.cloud.gateway
 spec:
   rules:
-  - host: foo.bar.com
+  - host: simple.fanout.com
     http:
       paths:
-      - path: /anything/simple-fanout/foo
+      - path: /anything/foo
         backend:
           serviceName: simple-fanout
           servicePort: 80
-      - path: /anything/simple-fanout/bar
+      - path: /anything/bar
         backend:
           serviceName: simple-fanout
           servicePort: 80

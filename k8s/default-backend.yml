@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: default-backend
-  namespace: gateway-as-ingress
+  namespace: gateway-ingress-v1
 spec:
   replicas: 1
   selector:
@@ -44,7 +44,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: default-backend
-  namespace: gateway-as-ingress
+  namespace: gateway-ingress-v1
   labels:
     app: default-backend
 spec:
@@ -59,10 +59,14 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: default-backend
-  namespace: gateway-as-ingress
+  namespace: gateway-ingress-v1
   annotations:
     kubernetes.io/ingress.class: spring.cloud.gateway
 spec:
-  backend:
-    serviceName: httpbin
-    servicePort: 80
+  rules:
+  - http:
+      paths:
+      - path: /anything/zhao
+        backend:
+          serviceName: default-backend
+          servicePort: 80

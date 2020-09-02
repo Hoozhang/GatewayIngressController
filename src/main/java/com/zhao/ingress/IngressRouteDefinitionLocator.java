@@ -100,9 +100,15 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                                         .host(backend.getServiceName())
                                         .build().toUri();
                                 // construct a RouteDefinition with text
-                                String text = id + routeIdx + "=" + uri + ","
-                                        + "Host=" + host + ",Path=" + path;
-                                RouteDefinition routeDefinition = new RouteDefinition(text);
+                                StringBuilder text = new StringBuilder();
+                                text.append(id).append(routeIdx).append("=").append(uri);
+                                if (host != null) {
+                                    text.append(",Host=").append(host);
+                                }
+                                if (path != null) {
+                                    text.append(",Path=").append(path);
+                                }
+                                RouteDefinition routeDefinition = new RouteDefinition(text.toString());
                                 routeDefinitions.put(routeDefinition.getId(), routeDefinition);
                                 routeIdx++;
                                 String yaml = this.objectMapper.writeValueAsString(routeDefinition);
@@ -117,10 +123,10 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                                 .build().toUri();
                         String text = id + routeIdx + "=" + uri;
                         RouteDefinition routeDefinition = new RouteDefinition(text);
-                        FilterDefinition filterDefinition = new FilterDefinition("PreserveHostHeader");
+                        /*FilterDefinition filterDefinition = new FilterDefinition("PreserveHostHeader");
                         List<FilterDefinition> filterDefinitions = new ArrayList<>();
                         filterDefinitions.add(filterDefinition);
-                        routeDefinition.setFilters(filterDefinitions);
+                        routeDefinition.setFilters(filterDefinitions);*/
                         routeDefinitions.put(routeDefinition.getId(), routeDefinition);
                         routeIdx++;
                         String yaml = this.objectMapper.writeValueAsString(routeDefinition);
