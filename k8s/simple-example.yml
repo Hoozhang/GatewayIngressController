@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-fanout
+  name: simple-example
   namespace: gateway-ingress-v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: simple-fanout
+      app: simple-example
   template:
     metadata:
       labels:
-        app: simple-fanout
+        app: simple-example
     spec:
       containers:
       - image: kennethreitz/httpbin
@@ -43,13 +43,13 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: simple-fanout
+  name: simple-example
   namespace: gateway-ingress-v1
   labels:
-    app: simple-fanout
+    app: simple-example
 spec:
   selector:
-    app: simple-fanout
+    app: simple-example
   ports:
   - protocol: TCP
     port: 80
@@ -58,20 +58,31 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: simple-fanout
+  name: simple-example
   namespace: gateway-ingress-v1
   annotations:
     kubernetes.io/ingress.class: spring.cloud.gateway
 spec:
   rules:
-  - host: simple.fanout.com
+  - host: foo.bar.com
     http:
       paths:
       - path: /anything/foo
         backend:
-          serviceName: simple-fanout
+          serviceName: simple-example
           servicePort: 80
       - path: /anything/bar
         backend:
-          serviceName: simple-fanout
+          serviceName: simple-example
+          servicePort: 80
+  - host: virtual.name.com
+    http:
+      paths:
+      - path: /anything/virtual
+        backend:
+          serviceName: simple-example
+          servicePort: 80
+      - path: /anything/name
+        backend:
+          serviceName: simple-example
           servicePort: 80
