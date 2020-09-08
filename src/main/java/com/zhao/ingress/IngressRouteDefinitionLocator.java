@@ -84,7 +84,7 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                     List<IngressRule> rules = spec.getRules();
                     // ingress must have a default backend or rules
                     if (defaultBackend == null && rules == null) {
-                        logger.warn("No {}/routes annotation found on ingress definition {}/{}. " +
+                        logger.warn("No {}/routes found on ingress definition {}/{}. " +
                                         "Ignoring this ingress definition.",
                                 INGRESS_CLASS, metadata.getNamespace(), metadata.getName());
                         return;
@@ -123,10 +123,6 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                                 .build().toUri();
                         String text = id + routeIdx + "=" + uri;
                         RouteDefinition routeDefinition = new RouteDefinition(text);
-                        /*FilterDefinition filterDefinition = new FilterDefinition("PreserveHostHeader");
-                        List<FilterDefinition> filterDefinitions = new ArrayList<>();
-                        filterDefinitions.add(filterDefinition);
-                        routeDefinition.setFilters(filterDefinitions);*/
                         routeDefinitions.put(routeDefinition.getId(), routeDefinition);
                         routeIdx++;
                         String yaml = this.objectMapper.writeValueAsString(routeDefinition);

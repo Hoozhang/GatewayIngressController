@@ -17,9 +17,20 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<springcloud.kubernetes.version>1.0.1.RELEASE</springcloud.kubernetes.version>
-		<springcloud.gateway.version>2.2.4.RELEASE</springcloud.gateway.version>
-		<springcloud.netflix.hystrix.version>2.2.4.RELEASE</springcloud.netflix.hystrix.version>
+		<spring-cloud.version>Hoxton.SR7</spring-cloud.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -49,13 +60,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
-			<version>${springcloud.gateway.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-			<version>${springcloud.netflix.hystrix.version}</version>
 		</dependency>
 
 		<dependency>

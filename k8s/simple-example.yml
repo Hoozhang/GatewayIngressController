@@ -63,6 +63,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: spring.cloud.gateway
 spec:
+  tls:
+  - hosts:
+    - foo.bar.com
+    secretName: tls-secret
   rules:
   - host: foo.bar.com
     http:
@@ -75,7 +79,11 @@ spec:
         backend:
           serviceName: simple-example
           servicePort: 80
-  - host: virtual.name.com
+      - path: /anything/com
+        backend:
+          serviceName: simple-example
+          servicePort: 80
+  - host: virtual.name.org
     http:
       paths:
       - path: /anything/virtual
@@ -83,6 +91,12 @@ spec:
           serviceName: simple-example
           servicePort: 80
       - path: /anything/name
+        backend:
+          serviceName: simple-example
+          servicePort: 80
+  - http:
+      paths:
+      - path: /anything/default
         backend:
           serviceName: simple-example
           servicePort: 80

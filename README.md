@@ -17,7 +17,7 @@ $ docker tag gateway-as-ingress zhaodockerhub/gateway-as-ingress
 $ docker push zhaodockerhub/gateway-as-ingress
 ```
 
-deploy the image into Kubernetes.
+deploy the 'gateway-as-ingress' image into Kubernetes.
 
 ```
 $ kubectl apply -f k8s/ingress.yml
