@@ -1,0 +1,31 @@
+
+spring:
+  application:
+    name: gateway
+  jmx:
+    enabled: false  # JMX dose not watch Spring Boot Application
+  cloud:
+    gateway:
+      httpclient:
+        ssl:
+          useInsecureTrustManager: true
+          handshake-timeout-millis: 10000
+          close-notify-flush-timeout-millis: 3000
+          close-notify-read-timeout-millis: 0
+
+# spring boot actuator configuration
+management:
+  endpoint:
+    health:
+      show-details: when_authorized
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+server:
+  ssl:
+    key-store-password: changeit
+    key-store: classpath:self-signed-cert.p12
+    key-password: changeit
+    key-store-type: PKCS12
