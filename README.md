@@ -13,8 +13,19 @@ build and push a docker image.
 
 ```
 $ docker build -t gateway-as-ingress .
-$ docker tag gateway-as-ingress zhaodockerhub/gateway-as-ingress:v2.1
-$ docker push zhaodockerhub/gateway-as-ingress:v2.1
+$ docker tag gateway-as-ingress zhaodockerhub/gateway-as-ingress
+$ docker push zhaodockerhub/gateway-as-ingress
+```
+
+basic setting for Kubernetes, e.g., (Namespace and ServiceAccount)
+```
+$ kubectl apply -f k8s/namespace.yml
+```
+
+add TLS setting into Kubernetes Secret.
+```
+$ kubectl create secret generic gateway-tls 
+          \ --from-file=src/main/resources/self-signed-cert.pfx
 ```
 
 deploy the 'gateway-as-ingress' image into Kubernetes.
@@ -23,7 +34,7 @@ deploy the 'gateway-as-ingress' image into Kubernetes.
 $ kubectl apply -f k8s/ingress.yml
 ```
 
-add some routes into Kubernetes.
+deploy some routes into Kubernetes.
 
 ```
 $ kubectl apply -f k8s/simple-example.yml
