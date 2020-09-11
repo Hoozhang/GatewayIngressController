@@ -24,13 +24,4 @@ management:
         include: '*'
 
 server:
-  ssl:
-    key-alias: 1
-    key-password: changeit
-    key-store-password: changeit
-    # JKS format cert
-    #key-store: classpath:self-signed-cert.jks
-    #key-store-type: JKS
-    # PKCS12 format cert
-    key-store: classpath:self-signed-cert.p12
-    key-store-type: PKCS12
+  port: 8080
