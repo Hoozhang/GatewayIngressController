@@ -21,7 +21,8 @@ public class GatewayAsIngressApplication {
 		 * for ascdevkvshareda-customer-https-dev-20200911.pfx, key-store-password: ""
 		 * refer form https://docs.microsoft.com/en-us/azure/key-vault/certificates/how-to-export-certificate?tabs=azure-cli
 		 */
-		properties.put("server.ssl.key-store", "classpath:self-signed-cert.pfx");
+		//properties.put("server.ssl.key-store", "classpath:self-signed-cert.pfx");
+		properties.put("server.ssl.key-store", "/etc/tls/self-signed-cert.pfx");
 		properties.put("server.ssl.key-store-password", "changeit");
 		properties.put("server.ssl.key-store-type", "PKCS12");
 

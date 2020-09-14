@@ -9,7 +9,8 @@ package your application.
 $ mvn clean package -DskipTests=true
 ```
 
-build and push a docker image.
+build and push a docker image. \
+Notice: replace 'zhaodockerhub' with your DockerHub username
 
 ```
 $ docker build -t gateway-as-ingress .
