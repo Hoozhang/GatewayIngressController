@@ -25,8 +25,7 @@ $ kubectl apply -f k8s/namespace.yml
 
 add TLS setting into Kubernetes Secret.
 ```
-$ kubectl create secret generic gateway-tls 
-          \ --from-file=src/main/resources/self-signed-cert.pfx
+$ kubectl create secret generic gateway-tls --from-file=src/main/resources/self-signed-cert.pfx
 ```
 
 deploy the 'gateway-as-ingress' image into Kubernetes.

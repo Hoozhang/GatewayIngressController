@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: test
+  namespace: gateway-ingress-v1
+  annotations:
+    kubernetes.io/ingress.class: spring.cloud.gateway
+spec:
+  rules:
+  - host: virtual.name.org
+    http:
+      paths:
+      - path: /anything/org
+        backend:
+          serviceName: simple-example
+          servicePort: 80
+      - path: /anything/test
+        backend:
+          serviceName: simple-example
+          servicePort: 80

@@ -16,14 +16,11 @@ spec:
     spec:
       serviceAccountName: service-account
       containers:
-      - image: zhaodockerhub/gateway-as-ingress:v2.5
+      - image: zhaodockerhub/gateway-as-ingress:v2.80
         imagePullPolicy: Always
         name: gateway-as-ingress
         ports:
         - containerPort: 8080
-        env:
-        - name: LOGGING_LEVEL_ROOT
-          value: TRACE
         resources:
           limits:
             memory: "300Mi"

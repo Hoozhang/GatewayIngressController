@@ -13,15 +13,5 @@ spring:
           close-notify-flush-timeout-millis: 3000
           close-notify-read-timeout-millis: 0
 
-# spring boot actuator configuration
-management:
-  endpoint:
-    health:
-      show-details: when_authorized
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-
 server:
   port: 8080
