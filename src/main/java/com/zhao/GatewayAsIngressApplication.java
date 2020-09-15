@@ -22,8 +22,8 @@ public class GatewayAsIngressApplication {
 		 * form https://docs.microsoft.com/en-us/azure/key-vault/certificates/how-to-export-certificate?tabs=azure-cli
 		 */
 		Properties properties = new Properties();
-		// null is Minikube, notNull is local env
 		StringBuilder keyPath = new StringBuilder();
+		// detect environment based on hostname, null is Minikube, notNull is local env
 		if (System.getenv("COMPUTERNAME") == null) {
 			keyPath.append("/etc/tls/");
 			logger.info("Minikube Env detected!");

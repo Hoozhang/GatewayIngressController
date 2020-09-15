@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: service-account
       containers:
-      - image: zhaodockerhub/gateway-as-ingress:v2.80
+      - image: zhaodockerhub/gateway-as-ingress:v2.81
         imagePullPolicy: Always
         name: gateway-as-ingress
         ports:
