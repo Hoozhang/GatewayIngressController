@@ -111,46 +111,40 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
             return;
         }
         // add rules
-        try {
-            if (rules != null) {
-                for (IngressRule rule : rules) {
-                    String host = rule.getHost();
-                    for (HTTPIngressPath pathBackend : rule.getHttp().getPaths()) {
-                        String path = pathBackend.getPath();
-                        IngressBackend backend = pathBackend.getBackend();
-                        URI uri = UriComponentsBuilder.newInstance()
-                                .scheme("lb")
-                                .host(backend.getServiceName())
-                                .build().toUri();
-                        // construct a RouteDefinition with text
-                        StringBuilder text = new StringBuilder();
-                        text.append(idPrefix).append(path).append("=").append(uri);
-                        if (host != null) {
-                            text.append(",Host=").append(host);
-                        }
-                        if (path != null) {
-                            text.append(",Path=").append(path);
-                        }
-                        RouteDefinition routeDefinition = new RouteDefinition(text.toString());
-                        routeDefinitions.put(routeDefinition.getId(), routeDefinition);
-                        String yaml = this.objectMapper.writeValueAsString(routeDefinition);
-                        logger.info("Add ingress rule: {}\t{}", idPrefix + path, yaml);
+        if (rules != null) {
+            for (IngressRule rule : rules) {
+                String host = rule.getHost();
+                for (HTTPIngressPath pathBackend : rule.getHttp().getPaths()) {
+                    String path = pathBackend.getPath();
+                    IngressBackend backend = pathBackend.getBackend();
+                    URI uri = UriComponentsBuilder.newInstance()
+                            .scheme("lb")
+                            .host(backend.getServiceName())
+                            .build().toUri();
+                    // construct a RouteDefinition with text
+                    StringBuilder text = new StringBuilder();
+                    text.append(idPrefix).append(path).append("=").append(uri);
+                    if (host != null) {
+                        text.append(",Host=").append(host);
                     }
+                    if (path != null) {
+                        text.append(",Path=").append(path);
+                    }
+                    RouteDefinition routeDefinition = new RouteDefinition(text.toString());
+                    routeDefinitions.put(routeDefinition.getId(), routeDefinition);
+                    logger.info("Add ingress rule: {}\n\n ==> {}\n", idPrefix + path, text.substring(1+text.indexOf("=")));
                 }
             }
-            if (defaultBackend != null) {
-                URI uri = UriComponentsBuilder.newInstance()
-                        .scheme("lb")
-                        .host(defaultBackend.getServiceName())
-                        .build().toUri();
-                String text = idPrefix + "=" + uri;
-                RouteDefinition routeDefinition = new RouteDefinition(text);
-                routeDefinitions.put(routeDefinition.getId(), routeDefinition);
-                String yaml = this.objectMapper.writeValueAsString(routeDefinition);
-                logger.info("Add ingress rule: {}\t{}", idPrefix, yaml);
-            }
-        } catch (Exception e) {
-            logger.error("Json process failure for RouteDefinition!");
+        }
+        if (defaultBackend != null) {
+            URI uri = UriComponentsBuilder.newInstance()
+                    .scheme("lb")
+                    .host(defaultBackend.getServiceName())
+                    .build().toUri();
+            String text = idPrefix + "=" + uri;
+            RouteDefinition routeDefinition = new RouteDefinition(text);
+            routeDefinitions.put(routeDefinition.getId(), routeDefinition);
+            logger.info("Add ingress rule: {}\n\n ==> {}\n", idPrefix, text.substring(1+text.indexOf("=")));
         }
     }
 
