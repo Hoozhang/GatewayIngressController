@@ -22,9 +22,9 @@ public class GatewayAsIngressApplication {
 		String keyPath = System.getenv("COMPUTERNAME") == null? "/etc/tls/" : "classpath:";
 		// load ssl cert filename from Kubernetes, to init SSL for gateway
 		String keyFile = new IngressTlsLoader().getOneIngressTls().getSecretName() + ".pfx";
-		properties.put("server.ssl.key-store", keyPath + keyFile);
-		properties.put("server.ssl.key-store-password", "");
-		properties.put("server.ssl.key-store-type", "PKCS12");
+		properties.setProperty("server.ssl.key-store", keyPath + keyFile);
+		properties.setProperty("server.ssl.key-store-password", "");
+		properties.setProperty("server.ssl.key-store-type", "PKCS12");
 		return properties;
 	}
 }
