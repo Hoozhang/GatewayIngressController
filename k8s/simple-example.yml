@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: simple-example
-  namespace: gateway-ingress-v1
+  namespace: intern-project
 spec:
   replicas: 1
   selector:
@@ -44,7 +44,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: simple-example
-  namespace: gateway-ingress-v1
+  namespace: intern-project
   labels:
     app: simple-example
 spec:
@@ -54,49 +54,3 @@ spec:
   - protocol: TCP
     port: 80
     name: http
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: simple-example
-  namespace: gateway-ingress-v1
-  annotations:
-    kubernetes.io/ingress.class: spring.cloud.gateway
-spec:
-  tls:
-  - hosts:
-    - foo.bar.com
-    secretName: tls-secret
-  rules:
-  - host: foo.bar.com
-    http:
-      paths:
-      - path: /anything/foo
-        backend:
-          serviceName: simple-example
-          servicePort: 80
-      - path: /anything/bar
-        backend:
-          serviceName: simple-example
-          servicePort: 80
-      - path: /anything/com
-        backend:
-          serviceName: simple-example
-          servicePort: 80
-  - host: virtual.name.org
-    http:
-      paths:
-      - path: /anything/virtual
-        backend:
-          serviceName: simple-example
-          servicePort: 80
-      - path: /anything/name
-        backend:
-          serviceName: simple-example
-          servicePort: 80
-  - http:
-      paths:
-      - path: /anything/default
-        backend:
-          serviceName: simple-example
-          servicePort: 80

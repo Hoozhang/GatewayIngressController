@@ -1,8 +1,5 @@
 package com.zhao.ingress;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.zhao.utils.MapUtil;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.extensions.*;
@@ -36,7 +33,7 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
 
     private static final Logger logger = LoggerFactory.getLogger(IngressRouteDefinitionLocator.class);
 
-    private static final String INGRESS_CLASS = "spring.cloud.gateway";
+    private static final String INGRESS_CLASS = "gateway-ingress-controller";
 
     private static final ConcurrentMap<String, RouteDefinition> routeDefinitions = new ConcurrentHashMap<>();
 
@@ -44,13 +41,10 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
 
     private final KubernetesClient kubernetesClient;
 
-    private final ObjectMapper objectMapper;
-
     public IngressRouteDefinitionLocator(ApplicationEventPublisher eventPublisher,
                                          KubernetesClient kubernetesClient) {
         this.eventPublisher = eventPublisher;
         this.kubernetesClient = kubernetesClient;
-        this.objectMapper = new Jackson2ObjectMapperBuilder().factory(new YAMLFactory()).build();
         logger.info("IngressRouteDefinitionLocator init successfully!");
     }
 
@@ -62,7 +56,7 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
     }
 
     @PostConstruct
-    // PostConstruct: run this method after Dependency Injection
+    // PostConstruct: run this method after Beans Injection
     // Register a listener for Kubernetes Ingress
     public void watch() {
         this.kubernetesClient.extensions().ingresses().inAnyNamespace().watch(this);
@@ -74,15 +68,15 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
         ObjectMeta metadata = ingress.getMetadata();
         IngressSpec spec = ingress.getSpec();
         String idPrefix = metadata.getNamespace() + "/" + metadata.getName();
+        // Annotation must contains "kubernetes.io/ingress.class: spring.cloud.gateway"
+        Map<String, String> annotations = metadata.getAnnotations();
+        if (annotations == null || !annotations.containsKey("kubernetes.io/ingress.class")
+                || !annotations.get("kubernetes.io/ingress.class").equals(INGRESS_CLASS)) {
+            logger.warn("No 'kubernetes.io/ingress.class' found in Annotations. " +
+                    "Ignoring this ingress definition.");
+            return;
+        }
         if (action == Action.ADDED) {
-            Map<String, String> annotations = metadata.getAnnotations();
-            // Annotation must contains "kubernetes.io/ingress.class: spring.cloud.gateway"
-            if (annotations == null || !annotations.containsKey("kubernetes.io/ingress.class")
-                    || !annotations.get("kubernetes.io/ingress.class").equals(INGRESS_CLASS)) {
-                logger.warn("No 'kubernetes.io/ingress.class' found in Annotations. " +
-                        "Ignoring this ingress definition.");
-                return;
-            }
             addIngressRules(metadata, spec, idPrefix);
             this.eventPublisher.publishEvent(new RefreshRoutesEvent(this));
         } else if (action == Action.MODIFIED) {
@@ -110,7 +104,6 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                     INGRESS_CLASS, metadata.getNamespace(), metadata.getName());
             return;
         }
-        // add rules
         if (rules != null) {
             for (IngressRule rule : rules) {
                 String host = rule.getHost();

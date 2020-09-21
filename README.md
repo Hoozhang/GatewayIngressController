@@ -13,9 +13,9 @@ build and push a docker image. \
 Notice: replace 'zhaodockerhub' with your DockerHub username
 
 ```
-$ docker build -t gateway-as-ingress .
-$ docker tag gateway-as-ingress zhaodockerhub/gateway-as-ingress
-$ docker push zhaodockerhub/gateway-as-ingress
+$ docker build -t zhaodockerhub/gateway-as-ingress .
+$ docker tag zhaodockerhub/gateway-as-ingress zhaodockerhub/gateway-as-ingress:v3.0
+$ docker push zhaodockerhub/gateway-as-ingress:v3.0
 ```
 
 basic setting for Kubernetes, e.g., (Namespace and ServiceAccount)
@@ -25,16 +25,22 @@ $ kubectl apply -f k8s/namespace.yml
 
 add TLS setting into Kubernetes Secret.
 ```
-$ kubectl create secret generic gateway-tls --from-file=src/main/resources/self-signed-cert.pfx
+$ kubectl create secret generic asc-test-net --from-file=src/main/resources/asc-test-net.pfx
 ```
 
-deploy the 'gateway-as-ingress' image into Kubernetes.
+deploy some routes into Kubernetes.
 
 ```
 $ kubectl apply -f k8s/ingress.yml
 ```
 
-deploy some routes into Kubernetes.
+deploy the 'gateway-as-ingress' image into Kubernetes.
+
+```
+$ kubectl apply -f k8s/gateway-ingress-controller.yml
+```
+
+deploy a service example into Kubernetes.
 
 ```
 $ kubectl apply -f k8s/simple-example.yml

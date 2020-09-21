@@ -1,68 +1,45 @@
----
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
 metadata:
-  name: gateway-as-ingress
-  namespace: gateway-ingress-v1
+  name: ingress-example
+  namespace: intern-project
+  annotations:
+    kubernetes.io/ingress.class: gateway-ingress-controller
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: gateway-as-ingress
-  template:
-    metadata:
-      labels:
-        app: gateway-as-ingress
-    spec:
-      serviceAccountName: service-account
-      containers:
-      - image: zhaodockerhub/gateway-as-ingress:v2.81
-        imagePullPolicy: Always
-        name: gateway-as-ingress
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            memory: "300Mi"
-          requests:
-            memory: "300Mi"
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTPS
-          initialDelaySeconds: 15
-          timeoutSeconds: 3
-          periodSeconds: 10
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTPS
-          initialDelaySeconds: 180
-          timeoutSeconds: 3
-          periodSeconds: 10
-          failureThreshold: 3
-        volumeMounts:
-        - name: gateway-tls-mount
-          mountPath: "/etc/tls"
-      volumes:
-        - name: gateway-tls-mount
-          secret:
-            secretName: gateway-tls
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: gateway-as-ingress
-  namespace: gateway-ingress-v1
-  labels:
-    app: gateway-as-ingress
-spec:
-  selector:
-    app: gateway-as-ingress
-  ports:
-  - protocol: TCP
-    port: 8080
-    name: http
+  tls:
+    - hosts:
+        - foo.asc-test.net
+      secretName: asc-test-net
+  rules:
+    - host: bar.svc.asc-test.net
+      http:
+        paths:
+          - path: /anything/bar
+            backend:
+              serviceName: simple-example
+              servicePort: 80
+          - path: /anything/svc
+            backend:
+              serviceName: simple-example
+              servicePort: 80
+    - host: foo.asc-test.net
+      http:
+        paths:
+          - path: /anything/foo
+            backend:
+              serviceName: simple-example
+              servicePort: 80
+          - path: /anything/asc
+            backend:
+              serviceName: simple-example
+              servicePort: 80
+          - path: /anything/test
+            backend:
+              serviceName: simple-example
+              servicePort: 80
+    - http:
+        paths:
+          - path: /anything/default
+            backend:
+              serviceName: simple-example
+              servicePort: 80

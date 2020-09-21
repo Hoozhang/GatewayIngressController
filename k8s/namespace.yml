@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: gateway-ingress-v1
+  name: intern-project
 
 ---
 # 创建ServiceAccount，包含一组Pod用于访问API Server，to get or update cluster state
@@ -11,7 +11,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: service-account
-  namespace: gateway-ingress-v1
+  namespace: intern-project
 
 ---
 # 创建ClusterRole，用于指定一组cluster级别的权限
@@ -40,4 +40,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: service-account
-    namespace: gateway-ingress-v1
+    namespace: intern-project
