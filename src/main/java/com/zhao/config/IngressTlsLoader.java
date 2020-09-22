@@ -31,6 +31,7 @@ public class IngressTlsLoader {
     }
 
     public IngressTLS getOneIngressTls() {
+        Assert.isTrue(ingressTlsList != null && ingressTlsList.size() > 0, "Ingress TLS Not Found!");
         return ingressTlsList.get(0);
     }
 
