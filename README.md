@@ -25,7 +25,7 @@ $ kubectl apply -f k8s/namespace.yml
 
 add TLS setting into Kubernetes Secret.
 ```
-$ kubectl create secret generic asc-test-net --from-file=src/main/resources/asc-test-net.pfx
+$ kubectl create secret generic asc-test-net --from-file=src/main/resources/asc-test-net.pfx -n asc-system
 ```
 
 deploy some routes into Kubernetes.

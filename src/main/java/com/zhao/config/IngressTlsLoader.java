@@ -10,12 +10,15 @@ import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class IngressTlsLoader {
 
     private final KubernetesClient kubernetesClient;
 
     private final List<IngressTLS> ingressTlsList;
+
+    private static final String INGRESS_CLASS = "spring-cloud-gateway";
 
     public IngressTlsLoader() {
         kubernetesClient = new DefaultKubernetesClient(new ConfigBuilder().build());
@@ -26,6 +29,11 @@ public class IngressTlsLoader {
     public void loadIngressTls() {
         IngressList ingressList = kubernetesClient.extensions().ingresses().list();
         for (Ingress ingress : ingressList.getItems()) {
+            Map<String, String> annotations = ingress.getMetadata().getAnnotations();
+            if (annotations == null || !annotations.containsKey("ingress.controller.type")
+                    || !annotations.get("ingress.controller.type").equals(INGRESS_CLASS)) {
+                continue;
+            }
             ingressTlsList.addAll(ingress.getSpec().getTls());
         }
     }

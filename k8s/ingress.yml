@@ -1,45 +1,35 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: ingress-example
-  namespace: intern-project
+  name: gateway-testing
+  namespace: asc-system
   annotations:
-    kubernetes.io/ingress.class: gateway-ingress-controller
+    ingress.controller.type: spring-cloud-gateway
 spec:
   tls:
     - hosts:
-        - foo.asc-test.net
+        - intern-prj1.asc-test.net
       secretName: asc-test-net
   rules:
-    - host: bar.svc.asc-test.net
+    - host: intern-prj1.asc-test.net
       http:
         paths:
-          - path: /anything/bar
+          - path: /service-1/bar
             backend:
-              serviceName: simple-example
-              servicePort: 80
-          - path: /anything/svc
+              serviceName: service-1
+              servicePort: 8080
+          - path: /service-1/foo
             backend:
-              serviceName: simple-example
-              servicePort: 80
-    - host: foo.asc-test.net
+              serviceName: service-1
+              servicePort: 8080
+    - host: intern-prj2.asc-test.net
       http:
         paths:
-          - path: /anything/foo
+          - path: /service-2/bar
             backend:
-              serviceName: simple-example
-              servicePort: 80
-          - path: /anything/asc
+              serviceName: service-2
+              servicePort: 8080
+          - path: /service-2/foo
             backend:
-              serviceName: simple-example
-              servicePort: 80
-          - path: /anything/test
-            backend:
-              serviceName: simple-example
-              servicePort: 80
-    - http:
-        paths:
-          - path: /anything/default
-            backend:
-              serviceName: simple-example
-              servicePort: 80
+              serviceName: service-2
+              servicePort: 8080

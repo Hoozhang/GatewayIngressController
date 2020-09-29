@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gateway-ingress-controller
-  namespace: intern-project
+  namespace: asc-system
 spec:
   replicas: 1
   selector:
@@ -14,39 +14,39 @@ spec:
       labels:
         app: gateway-ingress-controller
     spec:
-      serviceAccountName: service-account
+      serviceAccountName: gateway-ingress-serviceaccount
       containers:
-      - image: zhaodockerhub/gateway-as-ingress:v4.0
-        imagePullPolicy: Always
-        name: gateway-ingress-controller
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            memory: "300Mi"
-          requests:
-            memory: "300Mi"
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTPS
-          initialDelaySeconds: 15
-          timeoutSeconds: 3
-          periodSeconds: 10
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTPS
-          initialDelaySeconds: 30
-          timeoutSeconds: 3
-          periodSeconds: 10
-          failureThreshold: 3
-        volumeMounts:
-        - name: gateway-tls-mount
-          mountPath: "/etc/tls"
+        - image: zhaodockerhub/gateway-as-ingress:v4.0
+          imagePullPolicy: Always
+          name: gateway-ingress-controller
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: "300Mi"
+            requests:
+              memory: "300Mi"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTPS
+            initialDelaySeconds: 15
+            timeoutSeconds: 3
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            timeoutSeconds: 3
+            periodSeconds: 10
+            failureThreshold: 3
+          volumeMounts:
+            - name: gateway-tls-mount
+              mountPath: "/etc/tls"
       volumes:
         - name: gateway-tls-mount
           secret:
@@ -56,13 +56,13 @@ kind: Service
 apiVersion: v1
 metadata:
   name: gateway-ingress-controller
-  namespace: intern-project
+  namespace: asc-system
   labels:
     app: gateway-ingress-controller
 spec:
   selector:
     app: gateway-ingress-controller
   ports:
-  - protocol: TCP
-    port: 8080
-    name: http
+    - protocol: TCP
+      port: 8080
+      name: http

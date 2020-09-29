@@ -33,7 +33,7 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
 
     private static final Logger logger = LoggerFactory.getLogger(IngressRouteDefinitionLocator.class);
 
-    private static final String INGRESS_CLASS = "gateway-ingress-controller";
+    private static final String INGRESS_CLASS = "spring-cloud-gateway";
 
     private static final ConcurrentMap<String, RouteDefinition> routeDefinitions = new ConcurrentHashMap<>();
 
@@ -70,8 +70,8 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
         String idPrefix = metadata.getNamespace() + "/" + metadata.getName();
         // Annotation must contains "kubernetes.io/ingress.class: spring.cloud.gateway"
         Map<String, String> annotations = metadata.getAnnotations();
-        if (annotations == null || !annotations.containsKey("kubernetes.io/ingress.class")
-                || !annotations.get("kubernetes.io/ingress.class").equals(INGRESS_CLASS)) {
+        if (annotations == null || !annotations.containsKey("ingress.controller.type")
+                || !annotations.get("ingress.controller.type").equals(INGRESS_CLASS)) {
             logger.warn("No 'kubernetes.io/ingress.class' found in Annotations. " +
                     "Ignoring this ingress definition.");
             return;
@@ -111,8 +111,9 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
                     String path = pathBackend.getPath();
                     IngressBackend backend = pathBackend.getBackend();
                     URI uri = UriComponentsBuilder.newInstance()
-                            .scheme("lb")
+                            .scheme("http")
                             .host(backend.getServiceName())
+                            .port(backend.getServicePort().getIntVal())
                             .build().toUri();
                     // construct a RouteDefinition with text
                     StringBuilder text = new StringBuilder();
@@ -131,8 +132,9 @@ public class IngressRouteDefinitionLocator implements RouteDefinitionLocator, Wa
         }
         if (defaultBackend != null) {
             URI uri = UriComponentsBuilder.newInstance()
-                    .scheme("lb")
+                    .scheme("http")
                     .host(defaultBackend.getServiceName())
+                    .port(defaultBackend.getServicePort().getIntVal())
                     .build().toUri();
             String text = idPrefix + "=" + uri;
             RouteDefinition routeDefinition = new RouteDefinition(text);
