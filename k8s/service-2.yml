@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-1
+  namespace: asc-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-1
+  template:
+    metadata:
+      labels:
+        app: service-1
+    spec:
+      containers:
+        - image: zhaodockerhub/gateway-ingress-service-1
+          name: service-1
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "128Mi"
+            requests:
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 3
+            timeoutSeconds: 3
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 10
+            failureThreshold: 3
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: service-1
+  namespace: asc-system
+  labels:
+    app: service-1
+spec:
+  selector:
+    app: service-1
+  ports:
+    - protocol: TCP
+      port: 80
+      name: http
