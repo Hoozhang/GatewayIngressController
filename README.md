@@ -1,4 +1,4 @@
-# gateway as ingress
+# Gateway as Ingress Controller
 Implementation of Spring Cloud Gateway as K8S Ingress Controller based on similar example by [nlighten](https://github.com/nlighten/spring-cloud-gateway-ingress).
 
 ### How to run it
